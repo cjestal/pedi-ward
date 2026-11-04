@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pediatric Ward Tools</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+:root{--ink:#18191B;--muted:#4A4D52;--line:rgba(24,25,27,.12);--red:#8E0B0B;--red-soft:#F7DADA;--cream:#F6F4EF;--warn:#8A5A00;--warn-bg:#FFF4D6;--ok:#1F6F43;--ok-bg:#DDF1E4}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Figtree','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:28px;letter-spacing:-.02em;margin:0 0 4px}
+h1 a{color:inherit;text-decoration:none}
+.sub{color:var(--muted);margin:0 0 24px}
+.toplink{font-size:14px;font-weight:600;color:var(--muted)}
+input,select,button{font:inherit;color:var(--ink)}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible,.chips input:focus-visible+span{outline:2px solid var(--red);outline-offset:2px}
+.patient{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;background:var(--cream);border-radius:18px;padding:14px}
+@media (max-width:520px){.patient{grid-template-columns:1fr}}
+.lbl{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.hint{font-weight:400;color:var(--muted);font-size:13px}
+.weight{display:flex;gap:6px}
+.unit{position:relative;flex:1;min-width:0}
+.unit input{width:100%;font-size:22px;font-weight:600;padding:8px 46px 8px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;-moz-appearance:textfield}
+.unit input::-webkit-outer-spin-button,.unit input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:15px;pointer-events:none}
+.step{width:46px;font-size:22px;font-weight:600;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+.step:hover{background:var(--cream)}
+.age{display:flex;gap:6px}
+.age .unit input{padding-right:12px}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:0 12px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.search{margin:22px 0 8px}
+.search input{width:100%;font-size:17px;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.grp{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:20px 0 8px}
+.list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (max-width:480px){.list{grid-template-columns:1fr}}
+.list a{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none;font-weight:600;transition:background-color .15s}
+.list a:hover{background:var(--cream)}
+.list a small{font-weight:500;color:var(--muted);font-size:12px;white-space:nowrap}
+.empty{color:var(--muted);background:var(--cream);border-radius:14px;padding:18px;margin:8px 0 0}
+.back{display:inline-block;margin:22px 0 6px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 0}
+.back:hover{color:var(--red)}
+h2.tool{font-size:23px;margin:0 0 6px;letter-spacing:-.01em}
+.formula{color:var(--muted);font-size:14px;margin:0 0 14px}
+.unverified{background:var(--red-soft);color:var(--red);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;margin:-10px 0 20px}
+.unverified[hidden]{display:none}
+.fields{display:grid;gap:16px;margin:0 0 18px}
+.fields .unit{max-width:260px}
+.fields .unit input{font-size:19px}
+.fields select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-flex;align-items:center;min-height:42px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-weight:500;transition:background-color .15s,color .15s;line-height:1.25}
+.chips label:hover span{background:var(--cream)}
+.chips input:checked+span{background:var(--red);border-color:var(--red);color:#fff}
+.chips span b{margin-left:8px;font-size:13px;opacity:.75}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:480px){.cards{grid-template-columns:1fr}}
+.card{background:var(--cream);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.card h3{font-size:14px;font-weight:600;margin:0;color:var(--muted)}
+.big{font-size:36px;font-weight:700;letter-spacing:-.03em;color:var(--red);line-height:1.1}
+.big small{font-size:16px;color:var(--ink);font-weight:600;letter-spacing:0}
+.detail{font-size:14px;color:var(--muted)}
+.need{color:var(--muted);background:var(--cream);border-radius:14px;padding:16px 18px;margin:0}
+.alerts{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.alerts li{border-radius:10px;padding:10px 12px;font-size:14px;font-weight:500;background:var(--cream);color:var(--muted)}
+.alerts li.warn{background:var(--warn-bg);color:var(--warn)}
+.alerts li.err{background:var(--red-soft);color:var(--red)}
+.alerts li.ok{background:var(--ok-bg);color:var(--ok)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:16px 0 0}
+caption{text-align:left;font-weight:600;font-size:14px;margin-bottom:6px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+tr.hl td{background:var(--warn-bg);font-weight:600}
+.item{margin:0 0 16px;border:0;padding:0}
+.item legend{font-weight:600;font-size:15px;margin-bottom:8px;padding:0}
+.result{position:sticky;bottom:12px;margin-top:8px}
+.result .card{box-shadow:0 6px 24px rgba(24,25,27,.12);background:#fff;border:1px solid var(--line)}
+.reset{align-self:flex-start;margin-top:6px;font-weight:600;font-size:14px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.reset:hover{background:var(--cream)}
+details.src{margin-top:22px;font-size:14px}
+details.src summary{cursor:pointer;font-weight:600;color:var(--muted)}
+details.src blockquote{margin:10px 0;background:var(--cream);border-radius:10px;padding:10px 12px}
+details.src ul{padding-left:20px;margin:8px 0}
+footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:13px;color:var(--muted);line-height:1.5}
+.credit{margin:16px 0 0;padding-top:16px;border-top:1px solid var(--line);font-size:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px}
+.credit a{color:var(--red);font-weight:600;text-decoration:none;padding:6px 0}
+.credit a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<main>
+<h1><a href="#">Pediatric ward tools</a></h1>
+<p class="sub">Bedside calculators and scores. <a class="toplink" href="review.html">Review table</a></p>
+<p class="unverified" id="draft" role="note"><span aria-hidden="true">⚠</span> Draft: values are not yet checked by a doctor. Verify before use.</p>
+
+<section class="patient" aria-label="Patient">
+  <div>
+    <label class="lbl" for="kg">Weight</label>
+    <div class="weight">
+      <button type="button" class="step" data-step="-0.5" aria-label="Decrease weight by 0.5 kg">−</button>
+      <div class="unit"><input id="kg" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"><span>kg</span></div>
+      <button type="button" class="step" data-step="0.5" aria-label="Increase weight by 0.5 kg">+</button>
+    </div>
+  </div>
+  <div>
+    <label class="lbl" for="age">Age</label>
+    <div class="age">
+      <div class="unit"><input id="age" type="number" inputmode="decimal" min="0" step="1" placeholder="0"></div>
+      <div class="seg" role="group" aria-label="Age unit">
+        <button type="button" data-unit="d" aria-pressed="false">days</button>
+        <button type="button" data-unit="mo" aria-pressed="false">mo</button>
+        <button type="button" data-unit="yr" aria-pressed="true">yr</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="view" aria-live="polite"></div>
+</main>
+<footer>
+  For use by licensed physicians as a reference and calculation aid only. It does not replace clinical judgment.
+  Values come from a 2015 handbook and are being checked; each tool shows its source page and any problems found.
+  Nothing you enter leaves this device.
+  <p class="credit"><span>Made by Clint James · <a href="https://clintjames.us" target="_blank" rel="noopener">See more of my work →</a></span><a href="https://buymeacoffee.com/clintjames" target="_blank" rel="noopener">☕ Buy me a coffee</a></p>
+</footer>
+
+<script type="module">
+import { TOOLS, GROUPS, fmt } from './tools.js';
+import { scoreSum, scoreColumns } from './calc.js';
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const view = $('#view');
+const state = { query: '', values: {}, choices: {} }; // per-tool inputs survive switching tools
+let ageUnit = 'yr';
+
+function patient() {
+  const kg = parseFloat($('#kg').value);
+  const a = parseFloat($('#age').value);
+  const months = Number.isFinite(a) && a >= 0 ? (ageUnit === 'yr' ? a * 12 : ageUnit === 'mo' ? a : a / 30.4) : null;
+  return { kg: kg > 0 ? kg : null, months };
+}
+
+// --- list view ---
+function renderList() {
+  const q = state.query.trim().toLowerCase();
+  const hits = TOOLS.filter((t) => !q || `${t.name} ${t.keywords} ${t.group}`.toLowerCase().includes(q));
+  const groups = GROUPS.map((g) => [g, hits.filter((t) => t.group === g)]).filter(([, ts]) => ts.length);
+  view.innerHTML = `
+    <div class="search"><input id="q" type="search" placeholder="Search: gir, apgar, fluids, gfr…" aria-label="Search tools" value="${esc(state.query)}" autocomplete="off"></div>
+    ${groups.length ? groups.map(([g, ts]) => `<p class="grp">${esc(g)}</p><div class="list">${ts.map((t) => `<a href="#${t.id}">${esc(t.name)}<small>p. ${t.data.source.page}</small></a>`).join('')}</div>`).join('')
+      : '<p class="empty">No tool matches. Try another word.</p>'}`;
+  const q2 = $('#q');
+  q2.addEventListener('input', () => { state.query = q2.value; renderList(); const n = $('#q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); });
+  q2.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const first = view.querySelector('.list a'); if (first) location.hash = first.getAttribute('href'); } });
+}
+
+// --- tool view ---
+function sourceBlock(d) {
+  return `<details class="src"><summary>Source and notes</summary>
+    <p>Handy Pediatric Notes, page ${d.source.page}:</p><blockquote>${esc(d.source.text)}</blockquote>
+    ${d.flags.length ? `<p><b>Problems and other sources</b></p><ul>${d.flags.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</details>`;
+}
+
+function header(t) {
+  return `<a class="back" href="#">← All tools</a>
+    <h2 class="tool">${esc(t.name)}</h2>
+    ${t.data.formula ? `<p class="formula">${esc(t.data.formula)}</p>` : ''}`;
+}
+
+function field(t, inp) {
+  const vals = state.values[t.id];
+  const id = `in-${inp.id}`;
+  const hint = inp.hint ? ` <span class="hint">${esc(inp.hint)}</span>` : '';
+  if (inp.type === 'chips') {
+    return `<fieldset class="item"><legend>${esc(inp.label)}</legend><div class="chips">${inp.options.map(([v, l]) =>
+      `<label><input type="radio" name="${id}" value="${esc(v)}" data-in="${inp.id}" ${vals[inp.id] === v ? 'checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div></fieldset>`;
+  }
+  if (inp.type === 'select') {
+    return `<div><label class="lbl" for="${id}">${esc(inp.label)}</label><select id="${id}" data-in="${inp.id}">${inp.options.map(([v, l]) =>
+      `<option value="${esc(v)}" ${vals[inp.id] === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>`;
+  }
+  return `<div><label class="lbl" for="${id}">${esc(inp.label)}${hint}</label><div class="unit"><input id="${id}" data-in="${inp.id}" type="number" inputmode="decimal" step="${inp.step ?? 'any'}" value="${vals[inp.id] ?? ''}"><span>${esc(inp.unit ?? '')}</span></div></div>`;
+}
+
+const cardHtml = (c) => `<div class="card"><h3>${esc(c.label)}</h3><div class="big">${esc(c.value)} <small>${esc(c.unit)}</small></div>${c.detail ? `<div class="detail">${esc(c.detail)}</div>` : ''}</div>`;
+const alertsHtml = (as) => (as?.length ? `<ul class="alerts">${as.map((a) => `<li class="${a.level}">${esc(a.text)}</li>`).join('')}</ul>` : '');
+const tableHtml = (tb) => (tb ? `<table><caption>${esc(tb.caption)}</caption><thead><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${tb.rows.map((r, i) =>
+  `<tr${i === tb.highlight ? ' class="hl"' : ''}>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '');
+
+function renderCalc(t) {
+  state.values[t.id] ??= Object.fromEntries(t.inputs.map((i) => [i.id, i.default ?? null]));
+  view.innerHTML = `${header(t)}<div class="fields">${t.inputs.map((i) => field(t, i)).join('')}</div><div id="res"></div>${sourceBlock(t.data)}`;
+  view.querySelectorAll('[data-in]').forEach((el) => el.addEventListener(el.type === 'radio' || el.tagName === 'SELECT' ? 'change' : 'input', () => {
+    const inp = t.inputs.find((i) => i.id === el.dataset.in);
+    state.values[t.id][inp.id] = inp.type === 'number' ? (el.value === '' ? null : parseFloat(el.value)) : el.value;
+    updateCalc(t);
+  }));
+  updateCalc(t);
+}
+
+function updateCalc(t) {
+  const r = t.run(state.values[t.id], patient());
+  $('#res').innerHTML = r.need ? `<p class="need">${esc(r.need)}</p>`
+    : `<div class="cards">${r.cards.map(cardHtml).join('')}</div>${alertsHtml(r.alerts)}${tableHtml(r.table)}`;
+}
+
+function renderScore(t) {
+  const s = t.data;
+  const ch = (state.choices[t.id] ??= {});
+  let body;
+  if (s.kind === 'pick') {
+    body = `<fieldset class="item"><legend>${esc(s.prompt)}</legend><div class="chips">${s.options.map((o, i) =>
+      `<label><input type="radio" name="pick" data-item="pick" value="${i}" ${ch.pick === i ? 'checked' : ''}><span>${esc(o.label)}</span></label>`).join('')}</div></fieldset>`;
+  } else {
+    body = s.items.map((it) => `<fieldset class="item"><legend>${esc(it.label)}</legend><div class="chips">${it.options.map((o, i) => {
+      const label = typeof o === 'string' ? o : o.label;
+      const pts = typeof o === 'string' ? '' : `<b>${o.points}</b>`;
+      return `<label><input type="radio" name="${it.id}" data-item="${it.id}" value="${i}" ${ch[it.id] === i ? 'checked' : ''}><span>${esc(label)}${pts}</span></label>`;
+    }).join('')}</div></fieldset>`).join('');
+  }
+  view.innerHTML = `${header(t)}${s.note ? `<p class="formula">${esc(s.note)}</p>` : ''}${body}<div class="result" id="res"></div>${sourceBlock(s)}`;
+  view.querySelectorAll('[data-item]').forEach((el) => el.addEventListener('change', () => { ch[el.dataset.item] = Number(el.value); updateScore(t); }));
+  updateScore(t);
+}
+
+function updateScore(t) {
+  const s = t.data, ch = state.choices[t.id];
+  const done = s.kind === 'pick' ? (ch.pick != null ? 1 : 0) : s.items.filter((it) => ch[it.id] != null).length;
+  const total = s.kind === 'pick' ? 1 : s.items.length;
+  let card, alert;
+  if (s.kind === 'sum') {
+    const r = scoreSum(s, ch);
+    if (r) { card = { label: 'Total', value: `${r.total}`, unit: `/ ${r.max}`, detail: '' }; alert = { text: r.band.label, level: r.band.level }; }
+  } else if (s.kind === 'column') {
+    const r = scoreColumns(s, ch);
+    if (r) { card = { label: 'Assessment', value: r.column.label, unit: '', detail: r.column.advice }; alert = null; }
+  } else if (ch.pick != null) {
+    const o = s.options[ch.pick];
+    card = { label: 'Estimated bilirubin', value: o.result, unit: '', detail: o.label };
+  }
+  const reset = done ? '<button type="button" class="reset" id="reset">Clear</button>' : '';
+  $('#res').innerHTML = card
+    ? `<div class="card"><h3>${esc(card.label)}</h3><div class="big">${esc(card.value)} <small>${esc(card.unit)}</small></div>${card.detail ? `<div class="detail">${esc(card.detail)}</div>` : ''}${alertsHtml(alert ? [alert] : [])}${reset}</div>`
+    : `<div class="card"><div class="detail">${done} of ${total} answered</div>${reset}</div>`;
+  $('#reset')?.addEventListener('click', () => { state.choices[t.id] = {}; renderScore(t); window.scrollTo(0, 0); });
+}
+
+let current = null;
+function route() {
+  const t = TOOLS.find((x) => x.id === location.hash.slice(1));
+  current = t ?? null;
+  // Page-level disclaimer under the header: shown while the open tool (or, on
+  // the list, any tool) is unverified.
+  $('#draft').hidden = t ? t.data.verified : TOOLS.every((x) => x.data.verified);
+  if (!t) { renderList(); document.title = 'Pediatric Ward Tools'; return; }
+  document.title = `${t.name}: Pediatric Ward Tools`;
+  (t.score ? renderScore : renderCalc)(t);
+  window.scrollTo(0, 0);
+}
+
+// Patient changes only refresh the result, so typing focus stays put.
+function patientChanged() { if (current && !current.score) updateCalc(current); }
+$('#kg').addEventListener('input', patientChanged);
+$('#age').addEventListener('input', patientChanged);
+document.querySelectorAll('.step').forEach((b) => b.addEventListener('click', () => {
+  const v = Math.max(0, (parseFloat($('#kg').value) || 0) + Number(b.dataset.step));
+  $('#kg').value = v ? Number(v.toFixed(2)) : '';
+  patientChanged();
+}));
+document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+  ageUnit = b.dataset.unit;
+  document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  patientChanged();
+}));
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

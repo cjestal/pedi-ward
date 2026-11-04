@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review table: Pediatric Ward Tools</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;color:#18191B;font-family:'Figtree','Segoe UI',system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:26px;margin:0 0 6px}
+p{color:#4A4D52;margin:0 0 16px;line-height:1.5}
+section{margin:36px 0 0;break-inside:avoid}
+h2{font-size:19px;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+.badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#F7DADA;color:#8E0B0B}
+.badge.ok{background:#DDF1E4;color:#1F6F43}
+.src{background:#F6F4EF;border-radius:8px;padding:8px 10px;font-size:14px}
+.flags{background:#FFF4D6;color:#8A5A00;border-radius:8px;padding:8px 10px 8px 28px;font-size:14px;margin:8px 0}
+table{border-collapse:collapse;font-size:14px;margin:8px 0}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid rgba(24,25,27,.12);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#4A4D52}
+.k{font-family:ui-monospace,monospace;font-size:13px;color:#4A4D52}
+a{color:#8E0B0B;font-weight:600}
+@media print{a{display:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Review table</h1>
+<p>Every value the ward tools use, generated from the same data files. For each tool: what the handbook says (with page), the values the app uses, and the problems found.
+Yellow notes mark typos, contradictions and values taken from other references. Tools stay marked <b>unverified</b> until signed off. <a href="./">Back to tools</a></p>
+<div id="t"></div>
+</main>
+<script type="module">
+import { FORMULAS } from './formulas.js';
+import { SCORES } from './scores.js';
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const META = new Set(['name', 'verified', 'formula', 'source', 'flags', 'kind', 'items', 'bands', 'options', 'columns', 'rule', 'note', 'prompt']);
+const val = (v) => (v === Infinity ? '∞' : Array.isArray(v) ? v.map(val).join(' – ') : typeof v === 'object' && v ? obj(v) : esc(v));
+const obj = (o) => Object.entries(o).map(([k, v]) => `<span class="k">${esc(k)}</span> ${val(v)}`).join('; ');
+
+function tableOf(rows) {
+  const cols = [...new Set(rows.flatMap((r) => Object.keys(r)))];
+  return `<table><thead><tr>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${cols.map((c) => `<td>${r[c] == null ? '' : val(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+function values(e) {
+  return Object.entries(e).filter(([k]) => !META.has(k)).map(([k, v]) =>
+    Array.isArray(v) && typeof v[0] === 'object' ? `<p class="k">${esc(k)}</p>${tableOf(v)}` : `<div><span class="k">${esc(k)}</span> ${val(v)}</div>`).join('');
+}
+
+function scoreValues(s) {
+  let h = '';
+  if (s.kind === 'pick') h += tableOf(s.options);
+  if (s.items) h += s.kind === 'column'
+    ? `<table><thead><tr><th>Sign</th>${s.columns.map((c) => `<th>${esc(c.label)}</th>`).join('')}</tr></thead><tbody>${s.items.map((it) => `<tr><td>${esc(it.label)}</td>${it.options.map((o) => `<td>${esc(o)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+    : s.items.map((it) => `<p class="k">${esc(it.label)}</p>${tableOf(it.options)}`).join('');
+  if (s.bands) h += `<p class="k">interpretation (total at least min)</p>${tableOf(s.bands)}`;
+  if (s.columns) h += `<p class="k">rule</p><p>${s.rule.map((r) => `${esc(r.column)}: ${r.minSigns}+ signs in this column or worse`).join('; ')}</p>${tableOf(s.columns.map(({ label, advice }) => ({ label, advice })))}`;
+  return h;
+}
+
+const section = (e, body) => `<section><h2>${esc(e.name)} <span class="badge${e.verified ? ' ok' : ''}">${e.verified ? 'verified' : 'unverified'}</span></h2>
+  ${e.formula ? `<p><b>${esc(e.formula)}</b></p>` : ''}
+  <div class="src"><b>PDF p. ${e.source.page}:</b> ${esc(e.source.text)}</div>
+  ${e.flags.length ? `<ul class="flags">${e.flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}
+  ${body}</section>`;
+
+document.getElementById('t').innerHTML =
+  Object.values(FORMULAS).map((e) => section(e, values(e))).join('') +
+  Object.values(SCORES).map((s) => section(s, scoreValues(s))).join('');
+</script>
+</body>
+</html>
