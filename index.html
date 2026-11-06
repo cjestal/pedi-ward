@@ -90,8 +90,12 @@ details.src blockquote{margin:10px 0;background:var(--cream);border-radius:10px;
 details.src ul{padding-left:20px;margin:8px 0}
 footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:13px;color:var(--muted);line-height:1.5}
 .credit{margin:16px 0 0;padding-top:16px;border-top:1px solid var(--line);font-size:14px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px}
-.credit a{color:var(--red);font-weight:600;text-decoration:none;padding:6px 0}
-.credit a:hover{text-decoration:underline}
+.cj-by{display:inline-flex;align-items:center;gap:10px;font-size:15px;color:var(--muted);text-decoration:none;padding:4px 0}
+.cj-by strong{color:var(--ink);font-weight:600;transition:color .2s}
+.cj-by:hover strong{color:var(--red)}
+.cj-mark{width:32px;height:32px;border-radius:999px;background:var(--red);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;letter-spacing:.02em;flex:none}
+.cj-coffee{font-size:15px;display:inline-flex;align-items:center;gap:6px;color:var(--red);font-weight:600;text-decoration:none;padding:4px 0}
+.cj-coffee:hover .t{text-decoration:underline;text-underline-offset:3px}
 </style>
 </head>
 <body>
@@ -128,7 +132,7 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:13px;color:va
   For use by licensed physicians as a reference and calculation aid only. It does not replace clinical judgment.
   Values come from a 2015 handbook and are being checked; each tool shows its source page and any problems found.
   Nothing you enter leaves this device.
-  <p class="credit"><span>Made by Clint James · <a href="https://clintjames.us" target="_blank" rel="noopener">See more of my work →</a></span><a href="https://buymeacoffee.com/clintjames" target="_blank" rel="noopener">☕ Buy me a coffee</a></p>
+  <p class="credit"><a class="cj-by" href="https://clintjames.us" target="_blank" rel="noopener"><span class="cj-mark" aria-hidden="true">CJ</span><span>Built by <strong>Clint James</strong></span></a><a class="cj-coffee" href="https://buymeacoffee.com/clintjames" target="_blank" rel="noopener"><span aria-hidden="true">☕</span><span class="t">Buy me a coffee</span></a></p>
 </footer>
 
 <script type="module">
